@@ -1,0 +1,40 @@
+name: Build LaTeX report
+
+on:
+  push:
+    paths:
+      - 'report/**'
+  pull_request:
+    paths:
+      - 'report/**'
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache TeX Live packages (best-effort)
+        # This is a best-effort cache; the exact TeX Live layout may vary on runners.
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.texlive
+            ~/.texlive*
+          key: ${{ runner.os }}-texlive-${{ hashFiles('**/report/**') }}
+
+      - name: Compile LaTeX (xu-cheng/latex-action)
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: report/acl_latex.tex
+
+      - name: List report dir (debug)
+        run: ls -la report || true
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: report-pdf
+          path: report/*.pdf
