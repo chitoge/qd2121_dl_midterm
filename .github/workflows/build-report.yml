@@ -34,7 +34,7 @@ jobs:
         run: ls -la report || true
 
       - name: Upload PDF artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: report-pdf
           path: report/*.pdf
