@@ -1,0 +1,1326 @@
+\documentclass[11pt]{article}
+
+% Change "review" to "final" to generate the final (sometimes called camera-ready) version.
+% Change to "preprint" to generate a non-anonymous version with page numbers.
+\usepackage[preprint]{acl}
+
+% Standard package includes
+\usepackage{times}
+\usepackage{latexsym}
+
+% For proper rendering and hyphenation of words containing Latin characters (including in bib files)
+\usepackage[T1]{fontenc}
+% For Vietnamese characters
+% \usepackage[T5]{fontenc}
+% See https://www.latex-project.org/help/documentation/encguide.pdf for other character sets
+
+% This assumes your files are encoded as UTF8
+\usepackage[utf8]{inputenc}
+
+% This is not strictly necessary, and may be commented out,
+% but it will improve the layout of the manuscript,
+% and will typically save some space.
+\usepackage{microtype}
+
+% This is also not strictly necessary, and may be commented out.
+% However, it will improve the aesthetics of text in
+% the typewriter font.
+\usepackage{inconsolata}
+
+%Including images in your LaTeX document requires adding
+%additional package(s)
+\usepackage{graphicx}
+
+\usepackage{listings}    % For the code block
+\usepackage{xcolor}      % For code syntax highlighting
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\usepackage{url}
+
+% --- Define colors for syntax highlighting ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{ba'listings'rgb}{0.95,0.95,0.92}
+
+% --- Set up the 'listings' style for Python ---
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{white},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    morecomment=[l]{\#}
+}
+\lstset{style=mystyle} % Apply the style
+
+% If the title and author information does not fit in the area allocated, uncomment the following
+%
+%\setlength\titlebox{<dim>}
+%
+% and set <dim> to something 5cm or larger.
+
+\title{ECE-GY 7123 / CS-GY 6953 / Deep Learning - Fall '25 \\
+Midterm Project Report \\
+Team: Spline Reticulator}
+
+% Author information can be set in various styles:
+% For several authors from the same institution:
+% \author{Author 1 \and ... \and Author n \\
+%         Address line \\ ... \\ Address line}
+% if the names do not fit well on one line use
+%         Author 1 \\ {\bf Author 2} \\ ... \\ {\bf Author n} \\
+% For authors from different institutions:
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \And  ... \And
+%         Author n \\ Address line \\ ... \\ Address line}
+% To start a separate ``row'' of authors use \AND, as in
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \AND
+%         Author 2 \\ Address line \\ ... \\ Address line \And
+%         Author 3 \\ Address line \\ ... \\ Address line}
+
+\author{Thanh Do \\
+  New York University \\
+  \texttt{qd2121@nyu.edu} \\}
+
+%\author{
+%  \textbf{First Author\textsuperscript{1}},
+%  \textbf{Second Author\textsuperscript{1,2}},
+%  \textbf{Third T. Author\textsuperscript{1}},
+%  \textbf{Fourth Author\textsuperscript{1}},
+%\\
+%  \textbf{Fifth Author\textsuperscript{1,2}},
+%  \textbf{Sixth Author\textsuperscript{1}},
+%  \textbf{Seventh Author\textsuperscript{1}},
+%  \textbf{Eighth Author \textsuperscript{1,2,3,4}},
+%\\
+%  \textbf{Ninth Author\textsuperscript{1}},
+%  \textbf{Tenth Author\textsuperscript{1}},
+%  \textbf{Eleventh E. Author\textsuperscript{1,2,3,4,5}},
+%  \textbf{Twelfth Author\textsuperscript{1}},
+%\\
+%  \textbf{Thirteenth Author\textsuperscript{3}},
+%  \textbf{Fourteenth F. Author\textsuperscript{2,4}},
+%  \textbf{Fifteenth Author\textsuperscript{1}},
+%  \textbf{Sixteenth Author\textsuperscript{1}},
+%\\
+%  \textbf{Seventeenth S. Author\textsuperscript{4,5}},
+%  \textbf{Eighteenth Author\textsuperscript{3,4}},
+%  \textbf{Nineteenth N. Author\textsuperscript{2,5}},
+%  \textbf{Twentieth Author\textsuperscript{1}}
+%\\
+%\\
+%  \textsuperscript{1}Affiliation 1,
+%  \textsuperscript{2}Affiliation 2,
+%  \textsuperscript{3}Affiliation 3,
+%  \textsuperscript{4}Affiliation 4,
+%  \textsuperscript{5}Affiliation 5
+%\\
+%  \small{
+%    \Heron'sCorrespondence:} \href{mailto:email@domain}{email@domain}
+%  }
+%}
+
+\begin{filecontents*}{\examplecode.py}
+import math
+from sympy import *
+
+AB, AC, BC = 22, 12, 14
+# Calculate the semiperimeter and area using Heron's formula
+s = (AB + AC + BC) / 2
+K = sqrt(s * (s - AB) * (s - AC) * (s - BC))
+print(K)  # 75.8946638440411
+
+# Now use the formula for the radius of the inscribed circle
+r = K / s
+print(r)  # 3.16227766016838
+\end{filecontents*}
+
+\begin{filecontents*}{loss_data.dat}
+Step Loss
+10 1.086200
+20 0.677300
+30 0.664500
+40 0.623400
+50 0.626100
+60 0.651300
+70 0.647900
+80 0.629600
+90 0.618600
+100 0.634300
+110 0.592300
+120 0.631600
+130 0.608700
+140 0.593500
+150 0.597800
+160 0.591100
+170 0.599800
+180 0.602000
+190 0.607300
+200 0.605900
+210 0.591800
+220 0.571900
+230 0.597000
+240 0.601500
+250 0.573300
+260 0.587900
+270 0.603000
+280 0.573900
+290 0.582000
+300 0.590500
+310 0.594400
+320 0.582800
+330 0.566700
+340 0.583900
+350 0.564700
+360 0.559500
+370 0.583200
+380 0.582200
+390 0.566900
+400 0.557900
+410 0.553300
+420 0.582400
+430 0.565900
+440 0.569700
+450 0.592100
+460 0.552700
+470 0.556400
+480 0.561500
+490 0.529200
+500 0.531900
+510 0.555900
+520 0.533600
+530 0.534900
+540 0.532800
+550 0.554500
+560 0.559400
+570 0.547800
+580 0.525500
+590 0.523300
+600 0.528200
+610 0.536800
+620 0.527900
+630 0.518700
+640 0.513700
+650 0.538800
+660 0.526700
+670 0.524200
+680 0.528100
+690 0.549300
+700 0.536200
+710 0.535300
+720 0.530100
+730 0.509500
+740 0.532700
+750 0.504700
+760 0.492200
+770 0.522700
+780 0.493100
+790 0.495800
+800 0.552700
+810 0.514100
+820 0.499100
+830 0.503800
+840 0.507800
+850 0.522300
+860 0.491200
+870 0.495300
+880 0.496100
+890 0.488700
+900 0.512900
+910 0.506000
+920 0.503400
+930 0.509900
+940 0.494200
+950 0.480200
+960 0.501000
+970 0.503500
+980 0.503400
+990 0.499200
+1000 0.482500
+1010 0.515900
+1020 0.491700
+1030 0.523900
+1040 0.504600
+1050 0.492100
+1060 0.515800
+1070 0.533600
+1080 0.510900
+1090 0.509200
+1100 0.493500
+1110 0.536800
+1120 0.532900
+1130 0.513000
+1140 0.504600
+1150 0.513800
+1160 0.506200
+1170 0.520700
+1180 0.514800
+1190 0.521100
+1200 0.507000
+1210 0.502200
+1220 0.506500
+1230 0.517200
+1240 0.499100
+1250 0.512600
+1260 0.505700
+1270 0.504900
+1280 0.486900
+1290 0.490700
+1300 0.501400
+1310 0.516700
+1320 0.487300
+1330 0.516200
+1340 0.494300
+1350 0.493300
+1360 0.504400
+1370 0.492900
+1380 0.512100
+1390 0.484900
+1400 0.491600
+1410 0.494200
+1420 0.489600
+1430 0.466700
+1440 0.461200
+1450 0.483200
+1460 0.502700
+1470 0.466800
+1480 0.471700
+1490 0.489300
+1500 0.501500
+1510 0.473500
+1520 0.474900
+1530 0.480100
+1540 0.495700
+1550 0.499600
+1560 0.492900
+1570 0.473700
+1580 0.460400
+1590 0.500700
+1600 0.478400
+1610 0.488300
+1620 0.460700
+1630 0.478700
+1640 0.455200
+1650 0.446300
+1660 0.488600
+1670 0.450400
+1680 0.478900
+1690 0.473100
+1700 0.474900
+1710 0.502200
+1720 0.460200
+1730 0.463300
+1740 0.468500
+1750 0.475400
+1760 0.452600
+1770 0.459800
+1780 0.470400
+1790 0.442400
+1800 0.458500
+1810 0.447800
+1820 0.449900
+1830 0.459600
+1840 0.479100
+1850 0.450700
+1860 0.455300
+
+2010 0.426700
+2020 0.447000
+2030 0.441100
+2040 0.448600
+2050 0.447800
+2060 0.435500
+2070 0.461900
+2080 0.459100
+2090 0.453500
+2100 0.432100
+2110 0.464500
+2120 0.405700
+2130 0.438100
+2140 0.441300
+2150 0.453200
+2160 0.455900
+2170 0.445500
+2180 0.436500
+2190 0.443400
+2200 0.440400
+2210 0.442300
+2220 0.432200
+2230 0.422000
+2240 0.435000
+2250 0.432800
+2260 0.413500
+2270 0.420500
+2280 0.432800
+2290 0.455500
+2300 0.468900
+2310 0.441100
+2320 0.432400
+2330 0.416800
+2340 0.423500
+2350 0.426200
+2360 0.422900
+2370 0.421700
+2380 0.438300
+2390 0.430100
+2400 0.417300
+2410 0.415600
+2420 0.420200
+2430 0.410000
+2440 0.431900
+2450 0.422000
+2460 0.406900
+2470 0.399300
+2480 0.433700
+2490 0.416400
+2500 0.426200
+2510 0.422300
+2520 0.434400
+2530 0.421300
+2540 0.437500
+2550 0.405900
+2560 0.415700
+2570 0.402700
+2580 0.409100
+2590 0.396500
+2600 0.425700
+2610 0.418700
+2620 0.417200
+2630 0.399300
+2640 0.436200
+2650 0.419300
+2660 0.428200
+2670 0.379500
+2680 0.396100
+2690 0.407400
+2700 0.421100
+2710 0.417700
+2720 0.419800
+2730 0.440800
+2740 0.411500
+2750 0.421600
+2760 0.417900
+2770 0.417600
+2780 0.395100
+2790 0.431400
+2800 0.404100
+2810 0.373900
+2820 0.416000
+2830 0.418400
+2840 0.410400
+2850 0.397800
+2860 0.412800
+2870 0.421900
+2880 0.410100
+2890 0.394500
+2900 0.403200
+2910 0.397800
+2920 0.391700
+2930 0.398200
+2940 0.396900
+2950 0.413200
+2960 0.389100
+2970 0.398700
+2980 0.399000
+2990 0.416000
+3000 0.408700
+3010 0.405600
+3020 0.424700
+3030 0.395800
+3040 0.385400
+3050 0.410000
+3060 0.427600
+3070 0.414300
+3080 0.404900
+3090 0.404400
+3100 0.395700
+3110 0.390100
+3120 0.391700
+3130 0.393000
+3140 0.401500
+3150 0.374200
+3160 0.400700
+3170 0.410800
+3180 0.416600
+3190 0.412600
+3200 0.380500
+3210 0.383000
+3220 0.414000
+3230 0.385700
+3240 0.406500
+3250 0.389000
+3260 0.402800
+3270 0.386600
+3280 0.403600
+3290 0.402800
+3300 0.408000
+3310 0.377300
+3320 0.373600
+3330 0.390600
+3340 0.407000
+3350 0.390200
+3360 0.377900
+3370 0.382100
+3380 0.391700
+3390 0.369800
+3400 0.393300
+3410 0.383400
+3420 0.364200
+3430 0.394700
+3440 0.421200
+3450 0.403600
+3460 0.406800
+3470 0.405100
+3480 0.396700
+3490 0.390900
+3500 0.382100
+3510 0.399900
+3520 0.406400
+3530 0.378400
+3540 0.397800
+3550 0.380000
+3560 0.368600
+3570 0.361600
+3580 0.411400
+3590 0.391100
+3600 0.409400
+3610 0.382500
+3620 0.376100
+3630 0.398900
+3640 0.374000
+3650 0.386500
+3660 0.391600
+3670 0.396900
+3680 0.372100
+3690 0.392000
+3700 0.396500
+3710 0.457500
+3720 0.387400
+3730 0.366900
+3740 0.358100
+3750 0.393800
+3760 0.376600
+3770 0.378500
+3780 0.392400
+3790 0.384200
+3800 0.371100
+3810 0.416400
+3820 0.408000
+3830 0.391800
+3840 0.365700
+3850 0.369500
+3860 0.396600
+3870 0.350600
+3880 0.386800
+3890 0.393000
+3900 0.388900
+3910 0.371900
+3920 0.372700
+3930 0.372700
+3940 0.388900
+3950 0.385500
+3960 0.388800
+3970 0.369600
+3980 0.386700
+3990 0.396400
+4000 0.392200
+4010 0.405100
+4020 0.359700
+4030 0.388800
+4040 0.379500
+4050 0.372300
+4060 0.396100
+4070 0.393900
+4080 0.383300
+4090 0.381500
+4100 0.389300
+4110 0.394300
+4120 0.373200
+4130 0.385900
+4140 0.405100
+4150 0.363800
+4160 0.380000
+4170 0.383100
+4180 0.369600
+4190 0.374800
+4200 0.375600
+4210 0.396400
+4220 0.386500
+4230 0.392700
+4240 0.376300
+4250 0.369400
+4260 0.374100
+4270 0.375600
+4280 0.372400
+4290 0.369300
+4300 0.381500
+4310 0.369700
+4320 0.368000
+4330 0.393000
+4340 0.382900
+4350 0.367400
+4360 0.355700
+4370 0.364300
+4380 0.385400
+4390 0.358000
+4400 0.384900
+4410 0.378800
+4420 0.374800
+4430 0.368000
+4440 0.384000
+4450 0.385200
+4460 0.367800
+4470 0.374500
+4480 0.371100
+4490 0.417900
+4500 0.372900
+4510 0.376400
+4520 0.347900
+4530 0.361100
+4540 0.377900
+4550 0.377200
+4560 0.359300
+4570 0.367800
+4580 0.355000
+4590 0.374300
+4600 0.363800
+4610 0.355500
+4620 0.404600
+4630 0.383800
+4640 0.376600
+4650 0.381300
+4660 0.380700
+4670 0.375900
+4680 0.376200
+4690 0.376000
+4700 0.372400
+4710 0.365700
+4720 0.367800
+4730 0.374200
+4740 0.391900
+4750 0.369200
+4760 0.365900
+4770 0.412500
+4780 0.374800
+4790 0.392400
+4800 0.370200
+4810 0.357000
+4820 0.374400
+4830 0.391200
+4840 0.372000
+4850 0.371100
+4860 0.352600
+4870 0.380000
+4880 0.365300
+4890 0.373100
+4900 0.391200
+4910 0.349300
+4920 0.369600
+4930 0.377800
+4940 0.370400
+4950 0.376200
+4960 0.356900
+4970 0.370000
+4980 0.354500
+4990 0.367900
+5000 0.356500
+5010 0.371700
+5020 0.347900
+5030 0.363500
+5040 0.378200
+5050 0.375100
+5060 0.375500
+5070 0.362700
+5080 0.387400
+5090 0.372100
+5100 0.371700
+5110 0.377100
+5120 0.384700
+5130 0.375800
+5140 0.372600
+5150 0.382900
+5160 0.370200
+5170 0.356700
+5180 0.374000
+5190 0.365900
+5200 0.370900
+5210 0.375300
+5220 0.369700
+5230 0.340200
+5240 0.346500
+5250 0.376000
+5260 0.367700
+5270 0.364900
+5280 0.353300
+5290 0.366200
+5300 0.384900
+5310 0.403800
+5320 0.394600
+5330 0.374900
+5340 0.371700
+5350 0.386900
+5360 0.402900
+5370 0.390500
+5380 0.343800
+5390 0.364600
+5400 0.365200
+5410 0.371100
+5420 0.368000
+5430 0.376100
+5440 0.363000
+5450 0.355200
+5460 0.369400
+5470 0.358500
+5480 0.363200
+5490 0.361400
+5500 0.372800
+5510 0.352600
+5520 0.372500
+5530 0.348900
+5540 0.374400
+5550 0.374500
+5560 0.358800
+5570 0.356500
+5580 0.385100
+5590 0.346600
+5600 0.390900
+5610 0.371200
+5620 0.376900
+5630 0.355300
+5640 0.382000
+5650 0.354200
+5660 0.368600
+5670 0.368500
+5680 0.331900
+5690 0.375100
+5700 0.370900
+5710 0.343200
+5720 0.354900
+5730 0.380900
+5740 0.372800
+5750 0.340300
+5760 0.352800
+5770 0.352900
+5780 0.352200
+5790 0.373200
+5800 0.377800
+5810 0.345400
+5820 0.363900
+5830 0.364300
+5840 0.357700
+5850 0.366600
+5860 0.361500
+5870 0.359800
+5880 0.376900
+5890 0.361800
+5900 0.372100
+5910 0.369800
+5920 0.363100
+5930 0.347400
+5940 0.356200
+5950 0.384400
+5960 0.372000
+5970 0.358600
+5980 0.373300
+5990 0.364100
+6000 0.360100
+6010 0.386600
+6020 0.359100
+6030 0.341400
+6040 0.359900
+6050 0.376600
+6060 0.341200
+6070 0.365800
+6080 0.355100
+6090 0.386800
+6100 0.361500
+6110 0.347700
+6120 0.356200
+6130 0.362000
+6140 0.356300
+6150 0.368900
+6160 0.350800
+6170 0.375700
+6180 0.378500
+6190 0.344700
+6200 0.344200
+6210 0.346300
+6220 0.339700
+6230 0.342100
+6240 0.357900
+6250 0.370700
+6260 0.370700
+6270 0.356300
+6280 0.371000
+6290 0.365900
+6300 0.368400
+6310 0.362700
+6320 0.394300
+6330 0.351400
+6340 0.363400
+6350 0.358100
+6360 0.351500
+6370 0.386800
+6380 0.353300
+6390 0.356100
+6400 0.374200
+6410 0.399200
+6420 0.364800
+6430 0.353100
+6440 0.370100
+6450 0.356100
+6460 0.363200
+6470 0.341500
+6480 0.359900
+6490 0.370200
+6500 0.377900
+6510 0.336300
+6520 0.381300
+6530 0.360900
+6540 0.365900
+6550 0.356800
+6560 0.364400
+6570 0.384700
+6580 0.361800
+6590 0.364900
+6600 0.333700
+6610 0.356800
+6620 0.349100
+6630 0.336600
+6640 0.370500
+6650 0.357500
+6660 0.366500
+6670 0.363700
+6680 0.363700
+6690 0.363800
+6700 0.365700
+6710 0.334700
+6720 0.347200
+6730 0.388400
+6740 0.377000
+6750 0.359900
+6760 0.354700
+6770 0.410000
+6780 0.361800
+6790 0.347000
+6800 0.367900
+6810 0.342800
+6820 0.332000
+6830 0.348600
+6840 0.378100
+6850 0.350100
+6860 0.370200
+6870 0.350200
+6880 0.363000
+6890 0.350600
+6900 0.353900
+6910 0.353600
+6920 0.349200
+6930 0.357600
+6940 0.354000
+6950 0.358200
+6960 0.339500
+6970 0.375900
+6980 0.363600
+6990 0.334000
+7000 0.382200
+7010 0.363400
+7020 0.356300
+7030 0.362000
+7040 0.354600
+7050 0.359800
+7060 0.351900
+7070 0.363400
+7080 0.376200
+7090 0.363400
+7100 0.357600
+7110 0.370000
+7120 0.369900
+7130 0.353300
+7140 0.361500
+7150 0.360900
+7160 0.398400
+7170 0.350900
+7180 0.375300
+7190 0.355200
+7200 0.368600
+7210 0.363300
+7220 0.366800
+7230 0.343200
+7240 0.352100
+7250 0.382500
+7260 0.377700
+7270 0.383000
+7280 0.362200
+7290 0.378600
+7300 0.348900
+7310 0.351400
+7320 0.357400
+7330 0.364900
+7340 0.328100
+7350 0.357800
+7360 0.348600
+7370 0.379600
+7380 0.330100
+7390 0.350200
+7400 0.371300
+7410 0.337600
+7420 0.342000
+7430 0.371700
+7440 0.355800
+7450 0.363100
+7460 0.378600
+7470 0.358300
+7480 0.382000
+7490 0.378600
+7500 0.373400
+7510 0.373600
+7520 0.363800
+7530 0.352500
+7540 0.374700
+7550 0.362400
+7560 0.374600
+7570 0.336800
+7580 0.355300
+7590 0.351100
+7600 0.353700
+7610 0.332800
+7620 0.361500
+7630 0.346500
+7640 0.358100
+7650 0.355900
+7660 0.349600
+7670 0.370300
+7680 0.342500
+7690 0.324000
+7700 0.329000
+7710 0.352000
+7720 0.351200
+7730 0.362400
+7740 0.347100
+7750 0.365000
+7760 0.354100
+7770 0.366600
+7780 0.369600
+7790 0.368200
+7800 0.335400
+7810 0.359500
+7820 0.367700
+7830 0.362900
+7840 0.328300
+7850 0.348300
+7860 0.339800
+7870 0.339500
+7880 0.352200
+7890 0.396800
+7900 0.335100
+7910 0.368900
+7920 0.358700
+7930 0.350700
+7940 0.365900
+7950 0.342600
+7960 0.362500
+7970 0.367600
+7980 0.346600
+7990 0.356700
+8000 0.348500
+8010 0.352100
+8020 0.346300
+8030 0.343700
+8040 0.333900
+8050 0.345900
+8060 0.379200
+8070 0.359200
+8080 0.347400
+8090 0.403300
+8100 0.354700
+8110 0.350800
+8120 0.366300
+8130 0.349500
+8140 0.351000
+8150 0.344900
+8160 0.339400
+8170 0.365500
+8180 0.377300
+8190 0.346500
+8200 0.340300
+8210 0.352300
+8220 0.342400
+8230 0.341900
+8240 0.365300
+8250 0.342300
+8260 0.351800
+8270 0.363500
+8280 0.344300
+8290 0.379200
+8300 0.337400
+8310 0.325900
+8320 0.361800
+8330 0.361100
+8340 0.357500
+8350 0.363500
+8360 0.340300
+8370 0.332700
+8380 0.370200
+8390 0.343300
+8400 0.337300
+8410 0.373200
+8420 0.381000
+8430 0.374200
+8440 0.352300
+8450 0.344800
+8460 0.330500
+\end{filecontents*}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+This document serves as a midterm project report. It details the introduction, dataset description, model overview, experimentation, results, and conclusions for the Kaggle Math Question Answer Verification Competition. The project involved Supervised Fine-Tuning (SFT) of a Llama-3.1 8B model to predict the correctness of answers to math questions. By iterating on prompt formats, LoRA hyperparameters, and training duration, we developed a model that achieved a final validation accuracy of 89.2\%.
+\end{abstract}
+
+\section{Introduction}
+
+Our midterm project was a Math Question Answer Verification Competition hosted on Kaggle. Participants were tasked with Supervised-Fine Tuning (SFT) of the Llama-3.1 8B model to predict the correctness of answers to math questions. The goal was to determine whether the provided answer to each question was correct or not. Submissions required a CSV file specifying whether the solution for each test set question was labeled as 'True' or 'False', which makes our model effectively a binary classifier.
+
+Due to the known weaknesses of LLMs in multi-step logical reasoning, this project is highly relevant. While powerful, LLMs often "hallucinate" or produce plausible-sounding solutions that contain critical calculation or logical errors. This makes them unreliable for high-stakes domains like education or STEM research. This project requires us to create a "verifier" or "evaluator" model, a critical component that can filter these incorrect outputs, improve the reliability of LLM-generated content, and act as a check against model hallucinations.
+
+\section{Hypothesis \& Verification}
+
+\subsection{Understanding LoRA Fine-Tuning}
+
+Low-Rank Adaptation (LoRA) \citep{hu2021loralowrankadaptationlarge} is a parameter-efficient fine-tuning (PEFT) method designed to adapt large language models to specific tasks without updating all model parameters. By introducing trainable low-rank matrices into specific layers of the Transformer architecture, LoRA significantly reduces the number of trainable parameters, leading to faster training and lower computational costs.
+
+A popular extension of this is QLoRA (Quantized LoRA) \citep{dettmers2023qloraefficientfinetuningquantized}, which achieves even greater memory savings by loading the base model in a compressed, 4-bit quantized format. 
+
+For this project, we utilized both standard LoRA (running in 16-bit precision) and QLoRA (which combines LoRA with 4-bit quantization) to experiment with the trade-offs between training speed and memory efficiency.
+
+\subsection{Hypothesis}
+
+Our main hypothesis is that a Llama-3.1 8B model's ability to verify mathematical reasoning is not primarily a function of its raw parameters, but is unlocked by a highly specialized fine-tuning (SFT) strategy.
+
+Specifically, we hypothesize: "Fine-tuning a Llama-3.1 8B model using LoRA on a dataset that explicitly includes step-by-step natural language reasoning (as provided in the \texttt{solution} column of the dataset) will result in a classifier with significantly higher accuracy than a model trained naively. Furthermore, this accuracy will scale with the size and quality of this reasoning-focused dataset."
+
+\subsection{Verification Strategy}
+
+Our primary metric is \textit{classification accuracy}: the percentage of correct "True"/"False" predictions on a held-out test set. Our findings (Table~\ref{accuracies}) show a clear progression from a baseline = 0.61 accuracy to 0.892, which directly supports our data-centric hypothesis.
+
+We will also use the ranking on the private Kaggle leaderboard to validate our approach.
+
+\section{Dataset Description}
+
+\subsection{Dataset}
+\label{sec:dataset}
+
+The Kaggle competition requires us to use the \texttt{ad6398/nyu-dl-teach-maths-comp} dataset hosted on Hugging Face. The task was to train a model to predict the \texttt{is\_correct} boolean label using the provided question, answer, and solution.
+
+Each row in the dataset contains four primary fields:
+\begin{itemize}
+    \item \texttt{question} – The math question posed.
+    \item \texttt{answer} – The ideal or correct answer to the question.
+    \item \texttt{solution} – A detailed reasoning or solution that explains the answer.
+    \item \texttt{is\_correct} – The target label (\texttt{True}/\texttt{False}).
+\end{itemize}
+
+\begin{figure*}[h!]
+\centering
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\textbf{question:} What is the radius of the circle inscribed in triangle $(ABC)$ if $(AB = 22)$, $(AC = 12)$, and $(BC = 14)$? Express your answer in simplest radical form.
+
+\vspace{2mm}
+\textbf{answer:} 3.16227766016838
+
+\vspace{2mm}
+\textbf{solution:} The circle is inscribed in a triangle, and we know the sides of the triangle. To use the inradius formula, we need the area of the triangle. We can use Heron’s formula to calculate the area.
+
+\lstinputlisting[
+    language=Python,
+    style=mystyle,
+    numbers=none,
+]{\examplecode.py}
+
+Using the inradius formula, the answer is $(\boxed{3.16227766016838})$.
+
+\vspace{2mm}
+% --- Escaped underscore for 'is_correct' ---
+\textbf{is\_correct:} True
+\end{minipage}
+}
+\caption{An example question \& answer row from the competition dataset.}
+\label{fig:dataset_example}
+\end{figure*}
+
+The complete training dataset contains 1,000,000 samples. In our training pipeline, we used a fixed random seed to shuffle the data and create a validation set of the last 500 samples after shuffling, with the remaining samples forming our internal training dataset.
+
+\subsection{Formatting}
+
+For training and inference, all data was formatted into an unified prompt, as detailed in Figure~\ref{fig:prompt_template}. Some of our experiments (e.g., Section~\ref{sec:invest}) use a slightly different prompt; deviations are clearly noted in the corresponding experiments.
+
+\subsection{Preprocessing}
+
+We perform some light preprocessing in our final model. Please refer to Section~\ref{fig:prompt_template} for more background and details.
+
+\section{Model Overview}
+
+\textbf{Base Model:} The base model that we use in this task is the \texttt{unsloth/Meta-Llama-3.1-8B} model. We started from the starter notebook \& utilized the Unsloth library's \texttt{FastLanguageModel} for optimized training. The Unsloth implementation includes custom kernels for faster performance.
+
+\textbf{LoRA Configuration:} We initially experimented with QLoRA \citep{dettmers2023qloraefficientfinetuningquantized}, then trained our final model and ran inference on it using full 16-bit LoRA \cite{hu2021loralowrankadaptationlarge}. We targeted both the Attention and MLP layers, as recommended in \citet{schulman2025lora}. A global seed of $313337$ was used for reproducibility.
+
+We tried to apply a few different hyperparameter values in our experiments. The following LoRA hyperparameters were used for our final model:
+\begin{itemize}
+    \item \textbf{LoRA Rank ($r$):} 32
+    \item \texttt{lora\_alpha:} 64
+    \item \texttt{lora\_dropout:} 0
+\end{itemize}
+
+\textbf{Training Strategy:} 
+
+We used the \texttt{SFTTrainer} class from the Hugging Face \texttt{TRL} library. Training parameters are as follows:
+
+\begin{itemize}
+    \item \textbf{Batch Size:} 32
+    \item \textbf{Gradient Accumulation Steps:} 1
+    \item \textbf{Optimizer:} \texttt{adamw\_torch}
+    \item \textbf{Max sequence length:} 2048
+    \item \textbf{Max training steps:} 7500
+    \item \textbf{Warmup steps:} 5
+    \item \textbf{Weight decay:} 0.01
+    \item \textbf{Learning Rate:} $2 \times 10^{-4}$
+    \item \textbf{LR Scheduler:} \texttt{linear}
+\end{itemize}
+
+Please refer to Figure~\ref{fig:prompt_template} for the training and inference prompt.
+
+About the \textbf{number of epochs}, due to the limitations of time and computing resources, we did not make use of the whole training dataset; thus, effectively, it is \textbf{less than one full epoch}. The training process is limited by the \textbf{max training steps} hyperparameter as specified above.
+
+The training environment is detailed in Section~\ref{sec:env}.
+
+\textbf{Evaluation:} We evaluate the performance of our models by measuring \textit{classification accuracy} on a common validation dataset splitted from the training set as specified in Section~\ref{sec:dataset}. An overview of the result for our experiments can be found in Table~\ref{accuracies}.
+
+\begin{figure*}[h!]
+\centering
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\ttfamily
+You are an expert mathematician and a meticulous verifier. \\
+Your task is to evaluate a proposed solution to a math problem \\
+and determine if it's correct or not. \\
+Carefully read the Question and the Solution. Determine if the \\
+Solution is a correct reasoning process to solve the Question. \\
+Your response should be 'True' if the solution is correct, \\
+otherwise 'False'. \\
+Below is the Question and Solution. \\
+Question: \\
+\{\} \\
+Solution: \\
+\{\} \\
+Output: \\
+\{\}
+\end{minipage}
+}
+\caption{The prompt template that we used for both SFT training and inference. 
+The placeholders \{\} are filled with the question, solution, 
+and a ground-truth label for each training example. During inference, 
+the output label is left blank for the model to fill in.}
+\label{fig:prompt_template}
+\end{figure*}
+
+\section{Methodology and Experimentation}
+
+\subsection{Environment Details}
+\label{sec:env}
+
+The training and inference process for our model was conducted on Google Colab using an A100 GPU with 40GB of VRAM and 80GB of RAM. We only utilized the 100 free monthly compute credits provided to us, which translated to approximately 17 hours of compute on the specified runtime type. The version of the Colab notebook runtime environment was the latest as of this writing (\texttt{2025.10}).
+
+\subsection{Establishing Baseline \& Initial Approach}
+\label{sec:baseline}
+
+To establish a baseline for our later evaluations, we started with the starter Jupyter notebook, patched the dependency setup cell, populated the same training and validation dataset that we'll use for all experiments as specified in Section~\ref{sec:dataset}, then used the starter model with all parameters unchanged (including the prompts) to get a validation accuracy value. For the starter model training process, we kept the original seed value of $42$.
+
+With the above setup, we obtained a baseline accuracy of \textbf{61\%}, which is somewhat decent but not enough to get a full point for this assignment section.
+
+From reading the implementation, we can see that some parameters were intentionally set to low just to demonstrate the concept. We were able to figure out a few initial ideas that would be useful for improvement:
+\begin{itemize}
+    \item \textbf{Change the LoRA rank $r$ from 1 to 16 (and $\alpha$ to 32 accordingly)}.This is a recommended value in various guides, which allows our model to capture more complex relationships from the input.
+    \item \textbf{Change the maximum training steps from 60 to 400.} Contrary to what's stated in the starter notebook, the training process there did not run for a full epoch yet; only \texttt{n\_steps * effective\_batch\_size} $= 60 \times 2 \times 4 = 480$ samples from the training dataset were used. By running the training process slightly longer, the model would have been exposed to more data, allowing it to generalize better while keeping the training time reasonable for quick iterations (around 10 minutes to run all cells on the A100).
+    \item \textbf{Change the maximum sequence length to 2048.} While running the validation process, we encountered cases where PyTorch complained that the tokenized input was longer than the sequence size. This can be problematic during training, as the judgment label (True/False) might be truncated. While the training and inference time can be longer as a result of this change, it should improve the overall accuracy of our model.
+\end{itemize}
+
+With those simple changes, the model achieved \textbf{77\%} accuracy on the validation set. While this is a significant improvement, it is still not sufficient to score full points for this section, so we decided to explore other ways to enhance the model's performance.
+
+\subsection{First Attempt: Prompt Engineering \& Data Cleaning}
+\label{sec:prompteng}
+
+A very popular and powerful technique when making large language models more useful is \textbf{prompt engineering}, so we decided to explore this approach. From the starting prompt, we made the following modifications:
+\begin{itemize}
+    \item We would like to emphasize the \textit{reasoning verification} behavior of the model, so we added it to the prompt ("You are an expert mathematician \textbf{and a meticulous verifier}...");
+    \item We would also like our model to focus especially on the Solution section of the input and its relation to the Question part, so we have added it to the prompt.
+\end{itemize}
+
+Another possible venue of improvement is \textbf{data cleaning}. As we can see from the example question (Figure~\ref{fig:dataset_example}), decimal numbers are represented with very high precision in the samples. Our line of reasoning is that since we are working with \textit{language models}, which do not directly deal with the \textit{numerical value} of those tokens, retaining the high-precision numbers as they are might dilute the model. Therefore, we implemented a quick data filter to detect and truncate these values to only 4 decimal places for both training and inference.
+
+After implementing the proposed changes above with some minor tweaks (more details can be found in Section~\ref{sec:invest}), our model achieved a validation accuracy of \textbf{79.4\%}, which is lower than we initially expected. It's possible that we are not very good at optimizing prompts, so we decided to continue with tweaking other hyperparameters instead.
+
+\subsection{Second Attempt: Hyperparameter Tweaking \& Training Optimization}
+\label{sec:opt}
+
+In this attempt, we aimed to enhance the model's performance by exposing it to more data, potentially improving its generalization capabilities.   
+
+We retained the modified prompt and the data cleaning step from our previous phase. Our iterative experiments during this phase included:
+\begin{itemize}
+    \item \textbf{Further Increasing LoRA Rank:} We tested a more expressive adapter by increasing the rank from $r = 16$ to $r = 32$ and \texttt{lora\_alpha} from $32$ to $64$.
+    \item \textbf{Increasing Training Steps:} We progressively increased the training duration, evaluating performance at checkpoints corresponding to 1,000, 7,500, and 8,500 steps.
+\end{itemize}
+
+These proposed changes significantly lengthened the required training time; given our limitations in time and computing resources, training optimization became even more important. For this aspect, we implemented the following approaches:
+
+\begin{itemize}
+    \item \textbf{Switching to 16-bit LoRA:} During our previous training, we noticed that we're not making full use of our available VRAM. For this final, most intensive training run, we disabled 4-bit quantization (\texttt{4bit = False}) to prioritize faster training speed over VRAM usage. Since we are using full 16-bit LoRA, the optimizer needs to be changed to \texttt{adamw\_torch} to prevent unnecessary quantization during the optimization step.
+    \item \textbf{Increasing per-device train batch size to 32 and decreasing gradient accumulation steps to 1:} With more VRAM, we can load more samples at once \& further parallelize the training process. By increasing the per-device training batch size, we reduced the number of transfers required between RAM and VRAM for each training step, thereby accelerating the training process.
+    \item \textbf{Setting \texttt{dataloader\_num\_workers = 8}:} Theoretically, this should further parallelize the data transfer process from RAM to VRAM between each step, but we did not observe any big differences during training with this option. 
+\end{itemize}
+
+With this approach implemented, our model achieved a validation accuracy of \textbf{82.8\%} after 1,000 training steps in the first evaluation stage, indicating that we are heading in the right direction. As such, we left the training process to run for another 11 hours, then performed further evaluation on the 7,500- and 8,500-step milestones. At the end of our training run, the model yielded a nice \textbf{89.2\%} validation accuracy, so we decided to go with this model for our submission.
+
+\section{Result}
+
+We submitted results from two models to Kaggle for evaluation: one trained for 7,500 steps, and the other for 8,500 steps. After the competition, we were pleased to see that our entries achieved a final score of \texttt{0.86120}, \textbf{placing our team $12^{th}$ out of 71 participating teams.}
+
+\section{Analysis}
+
+\subsection{Performance Comparison}
+
+The model's performance (Validation Accuracy) was evaluated before and after retraining iterations (Table~\ref{accuracies}). A clear improvement was observed as the model's rank and training duration were increased. 
+
+\begin{table*}
+  \centering
+  \begin{tabular}{lc}
+    \hline
+    \textbf{Experiment Configuration} & \textbf{Validation Accuracy} \\
+    \hline
+    Baseline (Section~\ref{sec:baseline})     & 0.61           \\
+    QLoRA, $r=16$, 400 steps (Section~\ref{sec:baseline}) & 0.77         \\
+    QLoRA, $r=16$, 400 steps, modified prompt (Section~\ref{sec:prompteng}) & 0.794           \\
+    LoRA, $r=32$, 1,000 steps, modified prompt (Section~\ref{sec:opt}) & 0.828     \\
+    LoRA, $r=32$, 7,500 steps, modified prompt (Section~\ref{sec:opt}) & 0.882 \\
+    LoRA, $r=32$, 8,500 steps, modified prompt (Section~\ref{sec:opt}) & 0.892 \\
+    \hline
+  \end{tabular}
+  \caption{\label{accuracies}
+    Model performance comparison between successive experiment configurations.
+  }
+\end{table*}
+
+\subsection{Training Loss Analysis}
+
+We logged the training loss at 10-step intervals to monitor convergence. The loss curve showed a consistent downward trend, starting from 1.086200 at step 10 and steadily decreasing to 0.330500 by step 8460, indicating the model was effectively learning from the data.
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\begin{axis}
+    % This command reads the file "loss_data.dat"
+    \addplot [
+        blue, % Line color
+        mark=none, % No markers for so many points
+        thick % Make the line a bit thicker
+    ]
+    table {loss_data.dat};
+    
+    \addlegendentry{Training Loss}
+\end{axis}
+\end{tikzpicture}
+\caption{Training loss curve for the phase 2 model (r=32, ~8k steps). The gap in the line corresponds to a missing range in the logs (steps 1860-2010) due to a technical difficulty.}
+\label{fig:loss_curve}
+\end{figure}
+
+The optimization process seems to have plateaued around the 5,000-step mark. It would be interesting to see if this trend continues when training our model with the full dataset and for a greater number of epochs.
+
+\subsection{Factors Contributing to Improved Scores}
+
+The observed improvement in scores after retraining can be attributed to several factors:
+
+\textbf{Increased Data Exposure:} Increasing the number of training steps from 60 to 400, then to over 8,000, provided the model with more examples, thereby enhancing its ability to generalize to unseen data.   
+
+\textbf{Reduction in Overfitting:} Exposure to more diverse data points helped mitigate overfitting, resulting in improved performance on the test set.   
+
+\textbf{Hyperparameter Tuning:} Increasing the LoRA rank $r$ from 16 to 32 allowed the adapter to learn more complex patterns, which was crucial for this reasoning task.   
+
+\textbf{Full-Precision Adapters:} Switching from 4-bit QLoRA to 16-bit LoRA for the final run dedicated more computational resources, thereby removing any potential performance constraints introduced by quantization. 
+
+\subsection{Other experiments tried and their results}
+\label{sec:invest}
+
+Besides the main iterative training, we conducted several other experiments:
+
+\begin{itemize}
+    \item \textbf{Slightly different prompts during training and inference:} During our initial exploration (Section~\ref{sec:prompteng}), we tried to diverge the training and inference prompts slightly to see what would happen. Using the same prompt as in Figure~\ref{fig:prompt_template} for both training and inference yielded a validation accuracy of 0.772. However, when we remove the "Carefully read the Question..." line from the inference prompt, the accuracy improved slightly to 0.794. Nonetheless, when testing the same method against a 1000-step-trained model in our Phase 2 experiment (Section~\ref{sec:opt}), the improvement was much more modest (0.828 to 0.83). While this is an interesting phenomenon, as it reduces the predictability of our training process without yielding significant gains, we decided not to investigate it further.
+    \item \textbf{QLoRA vs. LoRA Speed:} While it's trivial to expect 16-bit LoRA to be faster than QLoRA due to the reduced quantization overhead (some resources claimed the difference to be 66\%\footnote{\url{https://docs.cloud.google.com/vertex-ai/generative-ai/docs/model-garden/lora-qlora}}, to confirm this, we ran a brief 100-step experiment comparing the speed of QLoRA (4-bit) vs. standard LoRA (16-bit) while keeping other hyperparameters the same. The performance was very similar, with QLoRA (4-bit) achieving 5.61 samples/sec and standard LoRA (16-bit) achieving 5.76 samples/sec, which is around a 2\% difference. This was somewhat surprising; we assumed that Unsloth applied some optimizations to speed up QLoRA. However, since our training dataset is very large, this efficiency gain is still valuable, so we decided to proceed with full 16-bit LoRA for our model.
+\end{itemize}
+
+\section{Discussion}
+
+Our findings so far supports our hypothesis that fine-tuning our model against the given dataset with step-by-step reasoning written in natural language will result in a reasoning classifier, and the accuracy of our classifier scales with the size of the training dataset.
+
+\textbf{Challenges.} While we talked about the \textit{quality} of this dataset, due to the large size of it, we were unable to measure the quality aspect of our hypothesis. Also, due to limited computing resources, we are also unable to extend our training process to the whole available dataset. Another point that failed short in our experiments was the effectiveness of a pure prompt engineering approach, due to our inexperience with this technique.
+
+\textbf{Future Work.} While working on the challenge, we also wondered on how to change the task from a simple True/False classifier to a \textit{reasoning verifier}. A possible approach could be changing the training labels for False examples to be an explanation of the error (e.g., "False. The solution incorrectly adds the discount instead of subtracting it."). This would fine-tune the model to "show its work" and provide genuine, step-by-step verification, which is a far more powerful and useful tool.
+
+\section{Conclusion}
+
+The experiment demonstrated the effectiveness of LoRA fine-tuning in adapting large language models, such as Llama-3.1 8B, to the specific classification task of math answer verification. Fine-tuning the model with a modified prompt, an increased adapter rank, more training steps, and using 16-bit precision for the final run resulted in a performance improvement from 0.61 to 0.892 accuracy.   
+
+Our takeaways include:
+\begin{itemize}
+    \item QLoRA provides a resource-efficient and highly effective approach for initial experimentation. However, if resources allow, LoRA provides faster training speed, especially on larger datasets.
+    \item Training duration and data exposure (i.e., number of steps) are critical factors for improving generalization on reasoning tasks.
+    \item Prompt engineering is not just for inference; the structure of the training prompt itself is a crucial hyperparameter for SFT, as it defines the task the model learns.
+\end{itemize}
+
+\section{Links to Resources}
+
+The corresponding resources for this report can be found at:   
+
+\textbf{Training Notebook:} 
+
+\begin{itemize}
+    \item Colab: \url{https://colab.research.google.com/drive/1672B25L9u0f3muTx472tKp_dEkXwcOjr?usp=sharing}
+    \item GitHub: \url{https://github.com/chitoge/qd2121_dl_midterm/blob/main/training_notebook.ipynb}
+\end{itemize}
+
+\textbf{Reproducer Notebook:} 
+
+\begin{itemize}
+    \item Colab: \url{https://colab.research.google.com/drive/1Wdn07WsQDpbGtv_QuXlo7DHX19-76p5e?usp=sharing}
+    \item GitHub: \url{https://github.com/chitoge/qd2121_dl_midterm/blob/main/repro_notebook.ipynb}
+\end{itemize}
+
+\textbf{Model Weights:} \
+\begin{itemize}
+    \item 7,500-step checkpoint (which generates the best-performing submission for our team on Kaggle): \url{https://drive.google.com/drive/folders/1gVGbqSK5QzQWraf7tM9eIvV9GJ92Z9iF?usp=drive_link}
+    \item 8,500-step checkpoint: \url{https://drive.google.com/drive/folders/19XThtpoI59avLT7XcWi0Yl4SMP0fQVQb?usp=drive_link}
+\end{itemize}
+
+\textbf{GitHub Repo:} \url{https://github.com/chitoge/qd2121_dl_midterm}
+
+% Bibliography entries for the entire Anthology, followed by custom entries
+%\bibliography{anthology,custom}
+% Custom bibliography entries only
+\bibliography{custom}
+
+\end{document}
