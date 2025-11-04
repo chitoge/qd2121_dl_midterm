@@ -28,7 +28,8 @@ jobs:
       - name: Compile LaTeX (xu-cheng/latex-action)
         uses: xu-cheng/latex-action@v2
         with:
-          root_file: report/acl_latex.tex
+          root_file: acl_latex.tex
+          working_directory: report
 
       - name: List report dir (debug)
         run: ls -la report || true
