@@ -2,6 +2,8 @@ name: Build LaTeX report
 
 on:
   push:
+    tags:
+      - "*.*.*"
     paths:
       - 'report/**'
   pull_request:
