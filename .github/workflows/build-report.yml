@@ -39,3 +39,9 @@ jobs:
         with:
           name: report-pdf
           path: report/*.pdf
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        with:
+          files: report/acl_latex.pdf
